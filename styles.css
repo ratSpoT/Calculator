@@ -3,5 +3,19 @@
 }
 
 button {
-  background-color: blue;
+  background-color: cyan;
+  width: 25%;
+}
+
+.clear{
+  width: 50%;
+}
+
+div {
+  height: 50px;
+  width: 200px;
+}
+
+.display {
+  background-color: black;
 }
