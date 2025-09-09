@@ -59,8 +59,8 @@ const buttonLabel = {
   divide: "/",
   evaluate: "=",
   decimal: ".",
-  clear: null,
-  delete: null,
+  clear: "clear",
+  del: "delete",
 };
 const btns = document.querySelectorAll("button");
 
@@ -75,7 +75,7 @@ btns.forEach(btn => {
         } else {
           fnum = fnum * 10 + input;
         }
-        displayValue = fnum;
+        displayValue = String(fnum);
       } else {
         if (snum === null) {
           snum = input;
@@ -105,12 +105,35 @@ btns.forEach(btn => {
         displayValue = String(fnum) + operatorConvertor[operator];
       }
     }
-    display.textContent = displayValue;
-
     // if input is clear, remove all values from all variables
-
+    else if (input === "clear") {
+      fnum = null;
+      operator = null;
+      snum = null;
+      displayValue = null;
+    }
     // if input is delete, remove the last input (only limited to before = is pressed)
-
+    else if (input === "delete") {
+      displayValue = displayValue.slice(0, displayValue.length - 1);
+      if (fnum !== null) {
+        if (operator === null) {
+          if (fnum < 10) {
+            fnum = null;
+          } else {
+            fnum = Math.floor(fnum / 10);
+          }
+        } else if (snum === null) {
+          operator = null;
+        } else {
+          if (snum < 10) {
+            snum = null;
+          } else {
+            snum = Math.floor(snum / 10);
+          }
+        }
+      }
+    }
+    display.textContent = displayValue;
     // if input is evaluate, calculate based on current values
     // if fnum is present but snum is absent, perfrom the operator on fnum
     // if operator is missing too, perform the previous operation ran
