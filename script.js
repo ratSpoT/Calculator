@@ -163,12 +163,12 @@ btns.forEach(btn => {
     // if fnum is present but snum is absent, perfrom the operator on fnum
     // if operator is missing too or no values provided at all, do nothing
     else if (input === "=") {
+      isDecimal = false;
       if (fnum !== null && operator !== null && snum !== null) {
         if (fnum === 0 && operator === "/") {
           fnum = null;
           operator = null;
           snum = null;
-          displayValue = null;
           displayValue = "ERROR";
         } else {
           fnum = operate(fnum, snum, operator);
@@ -180,7 +180,7 @@ btns.forEach(btn => {
         if (fnum === 0 && operator === "/") {
           fnum = null;
           operator = null;
-          displayValue = null;
+          
           displayValue = "ERROR";
         } else {
           fnum = operate(fnum, fnum, operator);
