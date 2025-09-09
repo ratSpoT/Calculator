@@ -34,6 +34,7 @@ let operator = null;
 let snum = null;
 let displayValue = null;
 let isDecimal = false;
+let isNegative = false;
 let operatorConvertor = {
   "+": "+",
   "-": "-",
@@ -83,6 +84,9 @@ btns.forEach(btn => {
         if (fnum === null) {
           if (isDecimal) {
             fnum = input / 10;
+          } else if (isNegative) {
+            fnum = -input;
+            isNegative = false;
           } else {
             fnum = input;
           }
@@ -99,6 +103,9 @@ btns.forEach(btn => {
         if (snum === null) {
           if (isDecimal) {
             snum = input / 10;
+          } else if (isNegative) {
+            snum = -input;
+            isNegative = false;
           } else {
             snum = input;
           }
@@ -116,12 +123,25 @@ btns.forEach(btn => {
     // if input is an operator, check if snum exists, if so perfrom the previous calculation first, else update operator
     else if ("+-*/".includes(input)) {
       if (snum === null) {
-        operator = input;
-        if (fnum === null) {
-          fnum = 0;
-          displayValue = "0" + operatorConvertor[operator];
-        } else {
-          displayValue = String(fnum) + operatorConvertor[operator];
+        if (input === "-") {
+          if (fnum === null) {
+            isNegative = true;
+            displayValue = "-";
+          } else if (operator === null) {
+            operator = input;
+            displayValue = String(fnum) + operatorConvertor[operator];
+          } else if (operator !== null) {
+            isNegative = true;
+            displayValue = String(fnum) + operatorConvertor[operator] + "-";
+          }
+         } else {
+          operator = input;
+          if (fnum === null) {
+            fnum = 0;
+            displayValue = "0" + operatorConvertor[operator];
+          } else {
+            displayValue = String(fnum) + operatorConvertor[operator];
+          }
         }
       } else {    // if snum is not null, operator is not null too, thus fnum is not null too
         if (fnum === 0 && operator === "/") {
@@ -130,12 +150,14 @@ btns.forEach(btn => {
           snum = null;
           displayValue = null;
           isDecimal = false;
+          isNegative = false;
           displayValue = "ERROR";
         } else {
           fnum = operate(fnum, snum, operator);
           operator = input;
           snum = null;
           isDecimal = false;
+          isNegative = false;
           displayValue = String(fnum) + operatorConvertor[operator];
         }
       }
@@ -147,11 +169,15 @@ btns.forEach(btn => {
       snum = null;
       displayValue = null;
       isDecimal = false;
+      isNegative = false;
     }
     // if input is delete, remove the last input (only limited to before = is pressed)
     else if (input === "delete" && fnum !== null) {
       displayValue = displayValue.slice(0, displayValue.length - 1);
-      if (operator === null) {
+      if (isNegative) {
+        isNegative = false;
+      }
+      else if (operator === null) {
         if (String(fnum).length <= 1) {
           fnum = null;
         } else {
@@ -176,11 +202,15 @@ btns.forEach(btn => {
           fnum = null;
           operator = null;
           snum = null;
+          isDecimal = false;
+          isNegative = false;
           displayValue = "ERROR";
         } else {
           fnum = operate(fnum, snum, operator);
           snum = null;
           operator = null;
+          isDecimal = false;
+          isNegative = false;
           displayValue = String(fnum);
         }
       } else if (operator !== null && snum === null) {  // if operator is not null, fnum cannot be null too
