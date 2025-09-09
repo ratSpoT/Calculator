@@ -68,9 +68,17 @@ const btns = document.querySelectorAll("button");
 btns.forEach(btn => {
   btn.addEventListener("click", e => {
     let input = buttonLabel[e.target.getAttribute("class")];
+    if (displayValue != null && displayValue.length >= 13 && input !== undefined) {
+      displayValue = "MAX LENGTH";
+      fnum = null;
+      operator = null;
+      snum = null;
+      displayValue = null;
+      isDecimal = false;
+    }
     // if input is a number, check if operator exists, if so concat it to snum, else concat it to fnum
     // it doesn't matter if the number is just derived, I like it this way
-    if (!isNaN(input)) {
+    else if (!isNaN(input)) {
       if (operator === null) {
         if (fnum === null) {
           if (isDecimal) {
