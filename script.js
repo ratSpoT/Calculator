@@ -37,7 +37,7 @@ let isDecimal = false;
 let operatorConvertor = {
   "+": "+",
   "-": "-",
-  "*": "x",
+  "*": "×",
   "/": "÷",
 }
 
@@ -80,9 +80,10 @@ btns.forEach(btn => {
           }
         } else {
           if (isDecimal) {
-            fnum = fnum + input / 10;
+            fnum = Number(String(fnum) + "." + String(input));
+            isDecimal = false;
           } else {
-            fnum = fnum * 10 + input;
+            fnum = Number(String(fnum) + String(input));
           }
         }
         displayValue = String(fnum);
@@ -95,9 +96,10 @@ btns.forEach(btn => {
           }
         } else {
           if (isDecimal) {
-            snum = snum + input / 10;
+            snum = Number(String(snum) + "." + String(input));
+            isDecimal = false;
           } else {
-            snum = snum * 10 + input;
+            snum = Number(String(snum) + String(input));
           }
         }
         displayValue = String(fnum) + operatorConvertor[operator] + String(snum);
@@ -139,39 +141,21 @@ btns.forEach(btn => {
       isDecimal = false;
     }
     // if input is delete, remove the last input (only limited to before = is pressed)
-    else if (input === "delete") {
+    else if (input === "delete" && fnum !== null) {
       displayValue = displayValue.slice(0, displayValue.length - 1);
-      if (fnum !== null) {
-        if (operator === null) {
-          if (fnum < 10) {
-            if (isDecimal) {
-              fnum = Number(String(fnum).slice(0, String(fnum).length - 1));
-            } else {
-              fnum = null;
-            }
-          } else {
-            if (isDecimal) {
-              fnum = Number(String(fnum).slice(0, String(fnum).length - 1));
-            } else {
-              fnum = Math.floor(fnum / 10);
-            }
-          }
-        } else if (snum === null) {
-          operator = null;
+      if (operator === null) {
+        if (String(fnum).length <= 1) {
+          fnum = null;
         } else {
-          if (snum < 10) {
-            if (isDecimal) {
-              snum = Number(String(snum).slice(0, String(snum).length - 1));
-            } else {
-              snum = null;
-            }
-          } else {
-            if (isDecimal) {
-              snum = Number(String(snum).slice(0, String(snum).length - 1));
-            } else {
-              snum = Math.floor(snum / 10);
-            }
-          }
+          fnum = Number(String(fnum).slice(0, String(fnum).length - 1));
+        }
+      } else if (snum === null) {
+        operator = null;
+      } else {
+        if (String(snum).length <= 1) {
+          snum = null;
+        } else {
+          snum = Number(String(snum).slice(0, String(snum).length - 1));
         }
       }
     }
@@ -226,9 +210,9 @@ btns.forEach(btn => {
           isDecimal = true;
           displayValue = String(fnum) + operatorConvertor[operator] + String(snum) + ".";
         }
-    display.textContent = displayValue;
       }
     }
+    display.textContent = displayValue;
   });
 });
 
