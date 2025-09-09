@@ -17,5 +17,6 @@ div {
 }
 
 .display {
-  background-color: black;
+  background-color: grey;
+  font-size: 30px;
 }
