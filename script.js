@@ -6,7 +6,7 @@ function subtract(a, b) {
   return a - b;
 }
 
-function multiply(a b) {
+function multiply(a, b) {
   return a * b;
 }
 
@@ -29,7 +29,10 @@ function operate(fnum, snum, operator) {
   }
 }
 
-let fnum, operator, snum, displayValue;
+let fnum = null;
+let operator = null;
+let snum = null;
+let displayValue = null;
 
 const display = document.querySelector("div.display");
 
@@ -55,9 +58,23 @@ const buttonLabel = {
 };
 const btns = document.querySelectorAll("button");
 
-btns.forEach(btn, () => {
+btns.forEach(btn => {
   btn.addEventListener("click", e => {
-    displayValue = e.getAttribute("class");
+    let input = buttonLabel[e.target.getAttribute("class")];
+    // if input is a number, check if operator exists, if so concat it to snum, else concat it to fnum
+    if (!isNaN(input)) {
+      
+    }
+    // if input is an operator, check if snum exists, if so perfrom the previous calculation first, else update operator
+    else if "+-*/".includes(displayValue)
+    display.textContent = displayValue;
+
+    // if input is clear, remove all values from all variables
+
+    // if input is delete, remove the last input (only limited to before = is pressed)
+
+    // if input is evaluate, calculate based on current values
+    // 
   });
 });
 
