@@ -33,6 +33,12 @@ let fnum = null;
 let operator = null;
 let snum = null;
 let displayValue = null;
+let operatorConvertor = {
+  "+": "+",
+  "-": "-",
+  "*": "x",
+  "/": "÷",
+}
 
 const display = document.querySelector("div.display");
 
@@ -63,10 +69,42 @@ btns.forEach(btn => {
     let input = buttonLabel[e.target.getAttribute("class")];
     // if input is a number, check if operator exists, if so concat it to snum, else concat it to fnum
     if (!isNaN(input)) {
-      
+      if (operator === null) {
+        if (fnum === null) {
+          fnum = input;
+        } else {
+          fnum = fnum * 10 + input;
+        }
+        displayValue = fnum;
+      } else {
+        if (snum === null) {
+          snum = input;
+        } else {
+          snum = snum * 10 + input;
+        }
+        displayValue = String(fnum) + operatorConvertor[operator] + String(snum);
+      }
     }
     // if input is an operator, check if snum exists, if so perfrom the previous calculation first, else update operator
-    else if "+-*/".includes(displayValue)
+    else if ("+-*/".includes(input)) {
+      if (snum === null) {
+        operator = input;
+        if (fnum === null) {
+          fnum = 0;
+          displayValue = "0" + operatorConvertor[operator];
+        } else {
+          displayValue = String(fnum) + operatorConvertor[operator];
+        }
+      } else {    // if snum is not null, operator is not null too
+        if (fnum === null) {
+          fnum = 0;
+        }
+        fnum = operate(fnum, snum, operator);
+        operator = input;
+        snum = null;
+        displayValue = String(fnum) + operatorConvertor[operator];
+      }
+    }
     display.textContent = displayValue;
 
     // if input is clear, remove all values from all variables
@@ -74,7 +112,10 @@ btns.forEach(btn => {
     // if input is delete, remove the last input (only limited to before = is pressed)
 
     // if input is evaluate, calculate based on current values
-    // 
+    // if fnum is present but snum is absent, perfrom the operator on fnum
+    // if operator is missing too, perform the previous operation ran
+    // if no previous operation ran, do nothing
+    // if operator is given then a num is given, treat fnum as 0 and snum as num given
   });
 });
 
