@@ -29,7 +29,7 @@ function operate(fnum, snum, operator) {
   }
 }
 
-let fnum, operator, snum;
+let fnum, operator, snum, displayValue;
 
 const display = document.querySelector("div.display");
 
@@ -55,4 +55,9 @@ const buttonLabel = {
 };
 const btns = document.querySelectorAll("button");
 
+btns.forEach(btn, () => {
+  btn.addEventListener("click", e => {
+    displayValue = e.getAttribute("class");
+  });
+});
 
