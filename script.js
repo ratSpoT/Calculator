@@ -163,7 +163,6 @@ btns.forEach(btn => {
     // if fnum is present but snum is absent, perfrom the operator on fnum
     // if operator is missing too or no values provided at all, do nothing
     else if (input === "=") {
-      isDecimal = false;
       if (fnum !== null && operator !== null && snum !== null) {
         if (fnum === 0 && operator === "/") {
           fnum = null;
@@ -180,14 +179,20 @@ btns.forEach(btn => {
         if (fnum === 0 && operator === "/") {
           fnum = null;
           operator = null;
-          
           displayValue = "ERROR";
         } else {
-          fnum = operate(fnum, fnum, operator);
+          if (isDecimal) {
+            snum = 0;
+          } else {
+            snum = fnum;
+          }
+          fnum = operate(fnum, snum, operator);  
           operator = null;
+          snum = null;
           displayValue = String(fnum);
         }
       }
+      isDecimal = false;
     }
     // if input is decimal, add decimal to number
     // if no number present, set counter to true such that next number type would cause 
@@ -215,4 +220,3 @@ btns.forEach(btn => {
     display.textContent = displayValue;
   });
 });
-
