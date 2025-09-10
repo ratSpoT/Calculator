@@ -238,7 +238,7 @@ document.addEventListener('keydown', e => {
   if (displayValue != null && displayValue.length >= 13 && "1234567890+-*/=cd".includes(key)) {
     handleClear();
     displayValue = "MAX LENGTH";
-    break;
+    return;
   }
 
   switch(key) {
@@ -252,14 +252,14 @@ document.addEventListener('keydown', e => {
     case "8":
     case "9":
     case "0":
-      handleNumber(Number(input));
+      handleNumber(Number(key));
       break;
 
     case "+":
     case "-":
     case "*":
     case "/":
-      handleOperator(input);
+      handleOperator(key);
       break;
 
     case "c":
@@ -267,11 +267,15 @@ document.addEventListener('keydown', e => {
       break;
 
     case "d":
-      handleDelete();
+      if (fnum !== null) {
+        handleDelete();
+      }
       break;
 
     case "=":
-      handleEvaluate();
+      if (fnum !== null && operator !== null) {
+        handleEvaluate();
+      }
       break;
 
     case ".":
@@ -279,4 +283,4 @@ document.addEventListener('keydown', e => {
       break;
   }
   display.textContent = displayValue;
-}
+});
