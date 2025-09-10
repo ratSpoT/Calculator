@@ -231,3 +231,52 @@ btns.forEach(btn => {
     display.textContent = displayValue;
   });
 });
+
+document.addEventListener('keydown', e => {
+  let key = e.key.toLowerCase();
+
+  if (displayValue != null && displayValue.length >= 13 && "1234567890+-*/=cd".includes(key)) {
+    handleClear();
+    displayValue = "MAX LENGTH";
+    break;
+  }
+
+  switch(key) {
+    case "1":
+    case "2":
+    case "3":
+    case "4":
+    case "5":
+    case "6":
+    case "7":
+    case "8":
+    case "9":
+    case "0":
+      handleNumber(Number(input));
+      break;
+
+    case "+":
+    case "-":
+    case "*":
+    case "/":
+      handleOperator(input);
+      break;
+
+    case "c":
+      handleClear();
+      break;
+
+    case "d":
+      handleDelete();
+      break;
+
+    case "=":
+      handleEvaluate();
+      break;
+
+    case ".":
+      handleDecimal();
+      break;
+  }
+  display.textContent = displayValue;
+}
