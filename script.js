@@ -43,29 +43,188 @@ let operatorConvertor = {
 }
 
 function handleNumber(input) {
-  return;
+  // if input is a number, check if operator exists, if so concat it to snum, else concat it to fnum
+  // it doesn't matter if the number is just derived, I like it this way
+  if (operator === null) {
+    if (fnum === null) {
+      if (isDecimal) {
+        fnum = input / 10;
+      } else if (isNegative) {
+        fnum = -input;
+        isNegative = false;
+      } else {
+        fnum = input;
+      }
+    } else {
+      if (isDecimal) {
+        fnum = Number(String(fnum) + "." + String(input));
+        isDecimal = false;
+      } else {
+        fnum = Number(String(fnum) + String(input));
+      }
+    }
+    displayValue = String(fnum);
+  } else {
+    if (snum === null) {
+      if (isDecimal) {
+        snum = input / 10;
+      } else if (isNegative) {
+        snum = -input;
+        isNegative = false;
+      } else {
+        snum = input;
+      }
+    } else {
+      if (isDecimal) {
+        snum = Number(String(snum) + "." + String(input));
+        isDecimal = false;
+      } else {
+        snum = Number(String(snum) + String(input));
+      }
+    }
+    displayValue = String(fnum) + operatorConvertor[operator] + String(snum);
+  }
 }
 
 function handleOperator(input) {
-  return;
+  // if input is an operator, check if snum exists, if so perfrom the previous calculation first, else update operator
+  // if - is given after a num, treat it as minus sign, if given when fnum is null or after a non - operator, treat it as negative sign
+  // if given after snum, treat it as minus sign and a calculate previous nums first
+  if (snum === null) {
+    if (input === "-") {
+      if (fnum === null) {
+        isNegative = true;
+        displayValue = "-";
+      } else if (operator === null) {
+        operator = input;
+        displayValue = String(fnum) + operatorConvertor[operator];
+      } else if (operator !== null) {
+        isNegative = true;
+        displayValue = String(fnum) + operatorConvertor[operator] + "-";
+      }
+     } else {
+      operator = input;
+      if (fnum === null) {
+        fnum = 0;
+        displayValue = "0" + operatorConvertor[operator];
+      } else {
+        displayValue = String(fnum) + operatorConvertor[operator];
+      }
+    }
+  } else {    // if snum is not null, operator is not null too, thus fnum is not null too
+    if (fnum === 0 && operator === "/") {
+      handleClear();
+      displayValue = "ERROR";
+    } else {
+      fnum = operate(fnum, snum, operator);
+      operator = input;
+      snum = null;
+      isDecimal = false;
+      isNegative = false;
+      displayValue = String(fnum) + operatorConvertor[operator];
+    }
+  }
 }
 
 function handleClear() {
-  return;
+  // if input is clear, remove all values from all variables
+  fnum = null;
+  operator = null;
+  snum = null;
+  displayValue = null;
+  isDecimal = false;
+  isNegative = false;
 }
 
 function handleDelete() {
-  return;
+  // if input is delete, remove the last input (only limited to before = is pressed)
+  if (isNegative) {
+    displayValue = displayValue.slice(0, displayValue.length - 1);
+    isNegative = false;
+  } else if (fnum !== null) {
+    if (operator === null) {
+      if (String(fnum).length <= 1) {
+        fnum = null;
+      } else if (fnum.includes("-") && String(fnum).length === 2) {
+        pass;
+      } if (fnum.includes("-") && String(fnum).length === 2) {
+        fnum = Number(String(fnum).slice(0, String(fnum).length - 1));
+      }
+    } else if (snum === null) {
+      operator = null;
+    } else {
+      if (String(snum).length <= 1) {
+        snum = null;
+      } else {
+        snum = Number(String(snum).slice(0, String(snum).length - 1));
+      }
+    }
+    displayValue = displayValue.slice(0, displayValue.length - 1);
+  }
 }
 
 function handleEvaluate() {
-  return;
+  // if input is evaluate, calculate based on current values
+  // if fnum is present but snum is absent, perfrom the operator on fnum
+  // if operator is missing too or no values provided at all, do nothing
+  if (fnum !== null && operator !== null && snum !== null) {
+        if (fnum === 0 && operator === "/") {
+          fnum = null;
+          operator = null;
+          snum = null;
+          isDecimal = false;
+          isNegative = false;
+          displayValue = "ERROR";
+        } else {
+          fnum = operate(fnum, snum, operator);
+          snum = null;
+          operator = null;
+          isDecimal = false;
+          isNegative = false;
+          displayValue = String(fnum);
+        }
+      } else if (operator !== null && snum === null) {  // if operator is not null, fnum cannot be null too
+        if (fnum === 0 && operator === "/") {
+          handleClear();
+          displayValue = "ERROR";
+        } else {
+          if (isDecimal) {
+            snum = 0;
+          } else {
+            snum = fnum;
+          }
+          fnum = operate(fnum, snum, operator);  
+          operator = null;
+          snum = null;
+          displayValue = String(fnum);
+        }
+      }
+      isDecimal = false;
 }
 
 function handleDecimal() {
-  return;
+  // if input is decimal, add decimal to number
+  // if no number present, set counter to true such that next number type would cause
+  if (fnum === null) {
+    fnum = 0;
+    isDecimal = true;
+    displayValue = "0.";
+  } else if (operator === null) {
+    if (!String(fnum).includes(".")) {
+      isDecimal = true;
+      displayValue = String(fnum) + ".";
+    }
+  } else if (snum === null) {
+    snum = 0;
+    isDecimal = true;
+    displayValue = String(fnum) + operatorConvertor[operator] + "0."
+  } else {
+    if (!String(snum).includes(".")) {
+      isDecimal = true;
+      displayValue = String(fnum) + operatorConvertor[operator] + String(snum) + ".";
+    }
+  }
 }
-
 
 const display = document.querySelector("div.display");
 
@@ -101,187 +260,18 @@ btns.forEach(btn => {
       snum = null;
       displayValue = null;
       isDecimal = false;
-    }
-    // if input is a number, check if operator exists, if so concat it to snum, else concat it to fnum
-    // it doesn't matter if the number is just derived, I like it this way
-    else if (!isNaN(input)) {
-      if (operator === null) {
-        if (fnum === null) {
-          if (isDecimal) {
-            fnum = input / 10;
-          } else if (isNegative) {
-            fnum = -input;
-            isNegative = false;
-          } else {
-            fnum = input;
-          }
-        } else {
-          if (isDecimal) {
-            fnum = Number(String(fnum) + "." + String(input));
-            isDecimal = false;
-          } else {
-            fnum = Number(String(fnum) + String(input));
-          }
-        }
-        displayValue = String(fnum);
-      } else {
-        if (snum === null) {
-          if (isDecimal) {
-            snum = input / 10;
-          } else if (isNegative) {
-            snum = -input;
-            isNegative = false;
-          } else {
-            snum = input;
-          }
-        } else {
-          if (isDecimal) {
-            snum = Number(String(snum) + "." + String(input));
-            isDecimal = false;
-          } else {
-            snum = Number(String(snum) + String(input));
-          }
-        }
-        displayValue = String(fnum) + operatorConvertor[operator] + String(snum);
-      }
-    }
-    // if input is an operator, check if snum exists, if so perfrom the previous calculation first, else update operator
-    else if ("+-*/".includes(input)) {
-      if (snum === null) {
-        if (input === "-") {
-          if (fnum === null) {
-            isNegative = true;
-            displayValue = "-";
-          } else if (operator === null) {
-            operator = input;
-            displayValue = String(fnum) + operatorConvertor[operator];
-          } else if (operator !== null) {
-            isNegative = true;
-            displayValue = String(fnum) + operatorConvertor[operator] + "-";
-          }
-         } else {
-          operator = input;
-          if (fnum === null) {
-            fnum = 0;
-            displayValue = "0" + operatorConvertor[operator];
-          } else {
-            displayValue = String(fnum) + operatorConvertor[operator];
-          }
-        }
-      } else {    // if snum is not null, operator is not null too, thus fnum is not null too
-        if (fnum === 0 && operator === "/") {
-          fnum = null;
-          operator = null;
-          snum = null;
-          displayValue = null;
-          isDecimal = false;
-          isNegative = false;
-          displayValue = "ERROR";
-        } else {
-          fnum = operate(fnum, snum, operator);
-          operator = input;
-          snum = null;
-          isDecimal = false;
-          isNegative = false;
-          displayValue = String(fnum) + operatorConvertor[operator];
-        }
-      }
-    }
-    // if input is clear, remove all values from all variables
-    else if (input === "clear") {
-      fnum = null;
-      operator = null;
-      snum = null;
-      displayValue = null;
-      isDecimal = false;
-      isNegative = false;
-    }
-    // if input is delete, remove the last input (only limited to before = is pressed)
-    else if (input === "delete") {
-      if (isNegative) {
-        displayValue = displayValue.slice(0, displayValue.length - 1);
-        isNegative = false;
-      } else if (fnum !== null) {
-        displayValue = displayValue.slice(0, displayValue.length - 1);
-        if (operator === null) {
-          if (String(fnum).length <= 1) {
-            fnum = null;
-          } else {
-            if (fnum.includes("-") && String(fnum).length === 2)
-            fnum = Number(String(fnum).slice(0, String(fnum).length - 1));
-          }
-        } else if (snum === null) {
-          operator = null;
-        } else {
-          if (String(snum).length <= 1) {
-            snum = null;
-          } else {
-            snum = Number(String(snum).slice(0, String(snum).length - 1));
-          }
-        }
-      }
-    }
-    // if input is evaluate, calculate based on current values
-    // if fnum is present but snum is absent, perfrom the operator on fnum
-    // if operator is missing too or no values provided at all, do nothing
-    else if (input === "=") {
-      if (fnum !== null && operator !== null && snum !== null) {
-        if (fnum === 0 && operator === "/") {
-          fnum = null;
-          operator = null;
-          snum = null;
-          isDecimal = false;
-          isNegative = false;
-          displayValue = "ERROR";
-        } else {
-          fnum = operate(fnum, snum, operator);
-          snum = null;
-          operator = null;
-          isDecimal = false;
-          isNegative = false;
-          displayValue = String(fnum);
-        }
-      } else if (operator !== null && snum === null) {  // if operator is not null, fnum cannot be null too
-        if (fnum === 0 && operator === "/") {
-          fnum = null;
-          operator = null;
-          displayValue = "ERROR";
-        } else {
-          if (isDecimal) {
-            snum = 0;
-          } else {
-            snum = fnum;
-          }
-          fnum = operate(fnum, snum, operator);  
-          operator = null;
-          snum = null;
-          displayValue = String(fnum);
-        }
-      }
-      isDecimal = false;
-    }
-    // if input is decimal, add decimal to number
-    // if no number present, set counter to true such that next number type would cause 
-    else if (input === ".") {
-      if (fnum === null) {
-        fnum = 0;
-        isDecimal = true;
-        displayValue = "0.";
-      } else if (operator === null) {
-        if (!String(fnum).includes(".")) {
-          isDecimal = true;
-          displayValue = String(fnum) + ".";
-        }
-      } else if (snum === null) {
-        snum = 0;
-        isDecimal = true;
-        displayValue = String(fnum) + operatorConvertor[operator] + "0."
-      } else {
-        if (!String(snum).includes(".")) {
-          isDecimal = true;
-          displayValue = String(fnum) + operatorConvertor[operator] + String(snum) + ".";
-        }
-      }
+    } else if (!isNaN(input)) {
+      handleNumber(input)
+    } else if ("+-*/".includes(input)) {
+      handleOperator(input);
+    } else if (input === "clear") {
+      handleClear();
+    } else if (input === "delete") {
+      handleDelete();
+    } else if (input === "=") {
+      handleEvaluate();
+    } else if (input === ".") {
+      handleDecimal();
     }
     display.textContent = displayValue;
   });
