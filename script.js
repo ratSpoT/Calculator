@@ -156,7 +156,6 @@ function handleEvaluate() {
 }
 
 function handleDecimal() {
-  // if input is decimal, add decimal to number
   if (fnum === null || justEvaluated) {
     fnum = "0.";
     justEvaluated = false;
@@ -165,18 +164,19 @@ function handleDecimal() {
     if (fnum === "-") {
       fnum = "-0.";
     } else {
-      fnum += "."
+      fnum += ".";
     }
     displayValue = fnum;
-  } else if (snum === null) {
-    snum = 0;
-    isDecimal = true;
-    displayValue = String(fnum) + operatorConvertor[operator] + "0."
-  } else {
-    if (!String(snum).includes(".")) {
-      isDecimal = true;
-      displayValue = String(fnum) + operatorConvertor[operator] + String(snum) + ".";
+  } else if (snum === null && operator !== null) {
+    snum = "0.";
+    displayValue = fnum + operatorConvertor[operator] + snum;
+  } else if (snum !== null && !snum.includes(".")) {
+    if (snum === "-") {
+      snum = "-0.";
+    } else {
+      snum += ".";
     }
+    displayValue = fnum + operatorConvertor[operator] + snum;
   }
 }
 
