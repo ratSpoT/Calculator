@@ -42,6 +42,31 @@ let operatorConvertor = {
   "/": "÷",
 }
 
+function handleNumber(input) {
+  return;
+}
+
+function handleOperator(input) {
+  return;
+}
+
+function handleClear() {
+  return;
+}
+
+function handleDelete() {
+  return;
+}
+
+function handleEvaluate() {
+  return;
+}
+
+function handleDecimal() {
+  return;
+}
+
+
 const display = document.querySelector("div.display");
 
 const buttonLabel = {
@@ -172,24 +197,27 @@ btns.forEach(btn => {
       isNegative = false;
     }
     // if input is delete, remove the last input (only limited to before = is pressed)
-    else if (input === "delete" && fnum !== null) {
-      displayValue = displayValue.slice(0, displayValue.length - 1);
+    else if (input === "delete") {
       if (isNegative) {
+        displayValue = displayValue.slice(0, displayValue.length - 1);
         isNegative = false;
-      }
-      else if (operator === null) {
-        if (String(fnum).length <= 1) {
-          fnum = null;
+      } else if (fnum !== null) {
+        displayValue = displayValue.slice(0, displayValue.length - 1);
+        if (operator === null) {
+          if (String(fnum).length <= 1) {
+            fnum = null;
+          } else {
+            if (fnum.includes("-") && String(fnum).length === 2)
+            fnum = Number(String(fnum).slice(0, String(fnum).length - 1));
+          }
+        } else if (snum === null) {
+          operator = null;
         } else {
-          fnum = Number(String(fnum).slice(0, String(fnum).length - 1));
-        }
-      } else if (snum === null) {
-        operator = null;
-      } else {
-        if (String(snum).length <= 1) {
-          snum = null;
-        } else {
-          snum = Number(String(snum).slice(0, String(snum).length - 1));
+          if (String(snum).length <= 1) {
+            snum = null;
+          } else {
+            snum = Number(String(snum).slice(0, String(snum).length - 1));
+          }
         }
       }
     }
