@@ -47,7 +47,7 @@ function handleNumber(input) {
   // if input is a number, check if operator exists, if so concat it to snum, else concat it to fnum
   // if number is just evaluated, rewrite over it
   if (operator === null) {
-    if (justEvaluated) {
+    if (justEvaluated || fnum === null) {
       fnum = String(input)
       justEvaluated = false;
     } else {
@@ -55,7 +55,11 @@ function handleNumber(input) {
     }
     displayValue = fnum;
   } else {
-    snum += String(input);
+    if (snum === null) {
+      snum = input;
+    } else {
+      snum += String(input);
+    }
     displayValue = fnum + operatorConvertor[operator] + snum;
   }
 }
@@ -90,7 +94,7 @@ function handleOperator(input) {
       displayValue = "ERROR";
     } else {
       fnum = operate(fnum, snum, operator);
-      if (isNan(fnum)) {
+      if (isNaN(fnum)) {
         handleClear();
         displayValue = "ERROR";
       } else {
@@ -139,19 +143,20 @@ function handleEvaluate() {
   if (snum === null) {
     snum = fnum;
   }
-  if (snum === 0 && operator === "/") {
-    handleClear();
-    displayValue = "ERROR";
-  }
-  fnum = operate(fnum, snum, operator);
-  if (isNan(fnum)) {
+  if (Number(snum) === 0 && operator === "/") {
     handleClear();
     displayValue = "ERROR";
   } else {
-    snum = null;
-    operator = null;
-    justEvaluated = true;
-    displayValue = fnum;
+    fnum = operate(fnum, snum, operator);
+    if (isNaN(fnum)) {
+      handleClear();
+      displayValue = "ERROR";
+    } else {
+      snum = null;
+      operator = null;
+      justEvaluated = true;
+      displayValue = fnum;
+    }
   }
 }
 
